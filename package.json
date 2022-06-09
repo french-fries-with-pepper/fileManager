@@ -1,0 +1,22 @@
+{
+  "name": "filemanager",
+  "version": "1.0.0",
+  "description": "[task description](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/file-manager/assignment.md)",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/french-fries-with-pepper/fileManager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/french-fries-with-pepper/fileManager/issues"
+  },
+  "homepage": "https://github.com/french-fries-with-pepper/fileManager#readme"
+}
