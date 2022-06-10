@@ -7,6 +7,9 @@ import { list } from "./builtins/ls.js";
 import { changeDir } from "./builtins/cd.js";
 import { cat } from "./builtins/cat.js";
 import { calculateHash } from "./builtins/hash.js";
+import { compressBrotli } from "./builtins/compress.js";
+import { decompressBrotli } from "./builtins/decompress.js";
+
 export class BuiltinsApi {
   currentPath;
   builtinsArr;
@@ -24,6 +27,8 @@ export class BuiltinsApi {
       "cp",
       "mv",
       "rm",
+      "compress",
+      "decompress",
     ];
   }
 
@@ -131,5 +136,21 @@ export class BuiltinsApi {
       }
       printPrompt(this.currentPath);
     });
+  }
+  async compress(args) {
+    const pathToFile = this.parseFileName(this.currentPath, args[0]);
+    const pathToArchive = this.parseFileName(this.currentPath, args[1]);
+    await compressBrotli(pathToFile, pathToArchive).catch((err) => {
+      console.log("Operation failed");
+    });
+    printPrompt(this.currentPath);
+  }
+  async decompress(args) {
+    const pathToArchive = this.parseFileName(this.currentPath, args[0]);
+    const pathToFile = this.parseFileName(this.currentPath, args[1]);
+    await decompressBrotli(pathToArchive, pathToFile).catch((err) => {
+      console.log("Operation failed");
+    });
+    printPrompt(this.currentPath);
   }
 }
