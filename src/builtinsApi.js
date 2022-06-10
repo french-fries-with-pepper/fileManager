@@ -1,28 +1,26 @@
 import { printPrompt } from "./components/printPrompt.js";
 import { homedir } from "os";
 import * as path from "path";
-import { createReadStream } from "fs";
+import { createReadStream, writeFile } from "fs";
 
 import { list } from "./builtins/ls.js";
 import { changeDir } from "./builtins/cd.js";
-
+import { calculateHash } from "./builtins/hash.js";
 export class BuiltinsApi {
   currentPath;
   builtinsArr;
 
   constructor() {
     this.currentPath = homedir();
-    this.builtinsArr = ["up", "ls", "cd", "cat"];
+    this.builtinsArr = ["up", "ls", "cd", "cat", "add", "hash"];
   }
 
   getPath() {
     return this.currentPath;
   }
 
-  parseFileName = (str) => {
-    return path.isAbsolute(str)
-      ? str
-      : path.resolve(path.join(this.currentPath, str));
+  parseFileName = (current, str) => {
+    return path.isAbsolute(str) ? str : path.resolve(path.join(current, str));
   };
 
   up() {
@@ -49,7 +47,7 @@ export class BuiltinsApi {
   }
 
   async cat(args) {
-    const pathToFile = this.parseFileName(args[0]);
+    const pathToFile = this.parseFileName(this.currentPath, args[0]);
     const readSteam = createReadStream(pathToFile, "utf8");
     readSteam.on("error", () => {
       console.log("Operation failed");
@@ -61,5 +59,26 @@ export class BuiltinsApi {
     readSteam.on("end", () => {
       printPrompt(this.currentPath);
     });
+  }
+
+  async add(args) {
+    const pathToFile = this.parseFileName(this.currentPath, args[0]);
+    writeFile(pathToFile, "", (err) => {
+      if (err) console.log("Operation failed");
+      printPrompt(this.currentPath);
+    });
+  }
+
+  async hash(args) {
+    const pathToFile = this.parseFileName(this.currentPath, args[0]);
+    calculateHash(pathToFile)
+      .then((res) => {
+        console.log(res);
+        printPrompt(this.currentPath);
+      })
+      .catch((err) => {
+        console.log("Operation failed");
+        printPrompt(this.currentPath);
+      });
   }
 }
