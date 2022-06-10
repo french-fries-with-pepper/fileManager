@@ -15,7 +15,7 @@ const greeting = `Welcome to the File Manager, ${username}!`;
 const exitMessage = `Thank you for using File Manager, ${username}`;
 console.log(greeting);
 
-process.on("SIGINT", () => exitHandler(exitMessage));
+process.on("SIGINT", () => exitHandler("\n"+exitMessage));
 printPrompt(homedir());
 
 const api = new BuiltinsApi();
