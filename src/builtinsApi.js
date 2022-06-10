@@ -5,6 +5,7 @@ import { createReadStream, writeFile } from "fs";
 
 import { list } from "./builtins/ls.js";
 import { changeDir } from "./builtins/cd.js";
+import { cat } from "./builtins/cat.js";
 import { calculateHash } from "./builtins/hash.js";
 export class BuiltinsApi {
   currentPath;
@@ -48,17 +49,10 @@ export class BuiltinsApi {
 
   async cat(args) {
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
-    const readSteam = createReadStream(pathToFile, "utf8");
-    readSteam.on("error", () => {
+    await cat(pathToFile).catch((err) => {
       console.log("Operation failed");
-      printPrompt(this.currentPath);
     });
-    readSteam.on("data", (chunk) => {
-      console.log(chunk);
-    });
-    readSteam.on("end", () => {
-      printPrompt(this.currentPath);
-    });
+    printPrompt(this.currentPath);
   }
 
   async add(args) {
@@ -71,14 +65,13 @@ export class BuiltinsApi {
 
   async hash(args) {
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
-    calculateHash(pathToFile)
+    await calculateHash(pathToFile)
       .then((res) => {
         console.log(res);
-        printPrompt(this.currentPath);
       })
       .catch((err) => {
         console.log("Operation failed");
-        printPrompt(this.currentPath);
       });
+    printPrompt(this.currentPath);
   }
 }
