@@ -1,5 +1,5 @@
 import { printPrompt } from "./components/printPrompt.js";
-import { homedir } from "os";
+import os from "os";
 import * as path from "path";
 import { rename, writeFile, cp as copy, rm as remove } from "fs";
 
@@ -15,7 +15,7 @@ export class BuiltinsApi {
   builtinsArr;
 
   constructor() {
-    this.currentPath = homedir();
+    this.currentPath = os.homedir();
     this.builtinsArr = [
       "up",
       "ls",
@@ -29,6 +29,7 @@ export class BuiltinsApi {
       "rm",
       "compress",
       "decompress",
+      "os",
     ];
   }
 
@@ -151,6 +152,28 @@ export class BuiltinsApi {
     await decompressBrotli(pathToArchive, pathToFile).catch((err) => {
       console.log("Operation failed");
     });
+    printPrompt(this.currentPath);
+  }
+  os(args) {
+    switch (args[0]) {
+      case "--EOL":
+        console.log(JSON.stringify(os.EOL));
+        break;
+      case "--cpus":
+        console.log(os.cpus());
+        break;
+      case "--homedir":
+        console.log(os.homedir());
+        break;
+      case "--username":
+        console.log(os.userInfo().username);
+        break;
+      case "--architecture":
+        console.log(process.arch);
+        break;
+      default:
+        console.log("Operation failed");
+    }
     printPrompt(this.currentPath);
   }
 }
