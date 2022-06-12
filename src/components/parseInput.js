@@ -1,4 +1,5 @@
 export const parseInput = (str) => {
+  if (str.trim() ==="") return { command: "", args: "" };
   const arr = str.match(/\\?.|^$/g).reduce(
     (p, c) => {
       if (c === '"') {

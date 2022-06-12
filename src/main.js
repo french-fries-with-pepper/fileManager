@@ -33,7 +33,9 @@ process.stdin.on("data", (data) => {
   }
   const { command, args } = parseInput(dataString);
   if (!api.builtinsArr.includes(command)) {
-    console.log("Invalid input");
+    if (command !== "") {
+      console.log("Invalid input");
+    }
     printPrompt(api.getPath());
   } else {
     api[command](args);
