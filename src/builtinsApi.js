@@ -9,6 +9,8 @@ import { cat } from "./builtins/cat.js";
 import { calculateHash } from "./builtins/hash.js";
 import { compressBrotli } from "./builtins/compress.js";
 import { decompressBrotli } from "./builtins/decompress.js";
+import { help } from "./help.js";
+import { startMessage } from "./info.js";
 
 export class BuiltinsApi {
   currentPath;
@@ -30,6 +32,7 @@ export class BuiltinsApi {
       "compress",
       "decompress",
       "os",
+      "help"
     ];
   }
 
@@ -41,12 +44,27 @@ export class BuiltinsApi {
     return path.isAbsolute(str) ? str : path.resolve(path.join(current, str));
   };
 
-  up() {
+  help() {
+    console.log(startMessage.text);
+    printPrompt(this.currentPath);
+  }
+
+  up(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.up);
+      printPrompt(this.currentPath);
+      return;
+    }
     this.currentPath = path.resolve(path.join(this.currentPath, "../"));
     printPrompt(this.currentPath);
   }
 
-  async ls() {
+  async ls(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.ls);
+      printPrompt(this.currentPath);
+      return;
+    }
     await list(this.currentPath).then((arr) => {
       console.log(arr.join("\n"));
     });
@@ -54,6 +72,11 @@ export class BuiltinsApi {
   }
 
   async cd(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.cd);
+      printPrompt(this.currentPath);
+      return;
+    }
     await changeDir(this.currentPath, args[0])
       .then((newPath) => {
         this.currentPath = newPath;
@@ -65,6 +88,11 @@ export class BuiltinsApi {
   }
 
   async cat(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.cat);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
     await cat(pathToFile).catch((err) => {
       console.log("Operation failed");
@@ -72,15 +100,25 @@ export class BuiltinsApi {
     printPrompt(this.currentPath);
   }
 
-  async add(args) {
+  add(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.add);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
-    writeFile(pathToFile, "", (err) => {
+    writeFile(pathToFile, Buffer.alloc(0), (err) => {
       if (err) console.log("Operation failed");
       printPrompt(this.currentPath);
     });
   }
 
   async hash(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.hash);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
     await calculateHash(pathToFile)
       .then((res) => {
@@ -91,7 +129,13 @@ export class BuiltinsApi {
       });
     printPrompt(this.currentPath);
   }
-  async rn(args) {
+
+  rn(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.rn);
+      printPrompt(this.currentPath);
+      return;
+    }
     const oldPath = this.parseFileName(this.currentPath, args[0]);
     const newPath = this.parseFileName(this.currentPath, args[1]);
     rename(oldPath, newPath, (err) => {
@@ -101,7 +145,13 @@ export class BuiltinsApi {
       printPrompt(this.currentPath);
     });
   }
-  async cp(args) {
+
+  cp(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.cp);
+      printPrompt(this.currentPath);
+      return;
+    }
     const oldPath = this.parseFileName(this.currentPath, args[0]);
     const newPath = this.parseFileName(
       this.currentPath,
@@ -115,7 +165,12 @@ export class BuiltinsApi {
     });
   }
 
-  async mv(args) {
+  mv(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.mv);
+      printPrompt(this.currentPath);
+      return;
+    }
     const oldPath = this.parseFileName(this.currentPath, args[0]);
     const newPath = this.parseFileName(
       this.currentPath,
@@ -129,7 +184,12 @@ export class BuiltinsApi {
     });
   }
 
-  async rm(args) {
+  rm(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.rm);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
     remove(pathToFile, {}, (err) => {
       if (err) {
@@ -138,7 +198,13 @@ export class BuiltinsApi {
       printPrompt(this.currentPath);
     });
   }
+
   async compress(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.compress);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToFile = this.parseFileName(this.currentPath, args[0]);
     const pathToArchive = this.parseFileName(this.currentPath, args[1]);
     await compressBrotli(pathToFile, pathToArchive).catch((err) => {
@@ -146,7 +212,13 @@ export class BuiltinsApi {
     });
     printPrompt(this.currentPath);
   }
+
   async decompress(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.decompress);
+      printPrompt(this.currentPath);
+      return;
+    }
     const pathToArchive = this.parseFileName(this.currentPath, args[0]);
     const pathToFile = this.parseFileName(this.currentPath, args[1]);
     await decompressBrotli(pathToArchive, pathToFile).catch((err) => {
@@ -154,13 +226,26 @@ export class BuiltinsApi {
     });
     printPrompt(this.currentPath);
   }
+
   os(args) {
+    if (args[args.length - 1] === "-h" || args[args.length - 1] === "--help") {
+      console.log(help.os);
+      printPrompt(this.currentPath);
+      return;
+    }
     switch (args[0]) {
       case "--EOL":
         console.log(JSON.stringify(os.EOL));
         break;
       case "--cpus":
-        console.log(os.cpus());
+        const outArray = os.cpus().map((el) => {
+          const res = {};
+          res.model = el.model.split("@")[0].trim();
+          res.clock = el.speed / 1000;
+          return res;
+        });
+        console.log(`Total: ${outArray.length}`);
+        console.log(outArray);
         break;
       case "--homedir":
         console.log(os.homedir());
